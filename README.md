@@ -1,30 +1,68 @@
 # Opkit Task
 
-Task manager app: NestJS backend, React frontend, Postgres database, with live updates over WebSocket.
+Менеджер задач: backend на NestJS, frontend на React, база данных PostgreSQL, статусы задач обновляются в реальном времени через WebSocket.
 
-## Run with Docker (recommended)
+## Технологии
 
-Requires Docker and Docker Compose.
+Backend:
+- NestJS
+- Prisma (ORM)
+- PostgreSQL
+- JWT-аутентификация
+- Socket.io (WebSocket)
+
+Frontend:
+- React + Vite
+- TypeScript
+- React Router
+- Zustand (хранение состояния)
+- Socket.io-client
+
+## Структура проекта
+
+```
+backend/
+  src/
+    auth/      — регистрация, логин, JWT
+    tasks/     — CRUD задач и WebSocket-гейтвей
+    prisma/    — модуль подключения к базе данных
+  prisma/      — схема базы данных и миграции
+
+frontend/
+  src/
+    pages/      — страницы (Login, Register, Tasks)
+    components/ — переиспользуемые компоненты (карточка задачи, колонка канбана)
+    store/      — Zustand store с задачами
+    lib/        — API-клиент и socket-клиент
+    context/    — контекст авторизации
+    types/      — типы данных (Task, User и т.д.)
+
+docker-compose.yml — поднимает базу, backend и frontend одной командой
+```
+
+## Запуск через Docker (проще всего)
+
+Нужен установленный Docker.
 
 ```
 docker compose up -d --build
 ```
 
-This starts:
-- Postgres on port 5433 (mapped from the container's 5432)
-- Backend API on http://localhost:8000 (runs database migrations automatically on startup)
-- Frontend on http://localhost:5173
+Поднимутся три контейнера:
+- PostgreSQL — порт 5433
+- Backend — http://localhost:8000 (миграции применяются автоматически при старте)
+- Frontend — http://localhost:5173
 
-Open http://localhost:5173 in your browser.
+Открыть в браузере http://localhost:5173.
 
-To stop everything:
+Остановить:
 ```
 docker compose down
 ```
 
-## Run locally without Docker
+## Запуск локально без Docker
 
-Requires Node.js 20+ and a running Postgres instance.
+Нужны Node.js 20+ и запущенный PostgreSQL.
 
 ### Backend
 
@@ -33,14 +71,14 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in `backend/`:
+Создать файл `.env` в папке `backend/`:
 ```
 DATABASE_URL="postgresql://<user>:<password>@localhost:5432/<db>?schema=public"
-JWT_SECRET="<a long random string>"
+JWT_SECRET="<длинная случайная строка>"
 PORT=8000
 ```
 
-Apply migrations and start the server:
+Применить миграции и запустить сервер:
 ```
 npx prisma migrate dev
 npm run start:dev
@@ -54,6 +92,6 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173.
+Открыть http://localhost:5173.
 
-Note: the backend only allows CORS from http://localhost:5173 by default. Set `FRONTEND_URL` in the backend's `.env` if you run the frontend on a different port.
+Примечание: backend по умолчанию разрешает запросы только с http://localhost:5173 (CORS). Если фронтенд запущен на другом порту — укажи его в `FRONTEND_URL` в `.env` backend'а.
