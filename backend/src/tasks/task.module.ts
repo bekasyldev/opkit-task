@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TaskService } from './task.service.js';
 import { TaskController } from './task.controller.js';
 import { JwtAuthGuard } from '../auth/guards/auth.guard.js';
+import { TasksGateway } from './task.gateaway.js';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { JwtAuthGuard } from '../auth/guards/auth.guard.js';
     }),
   ],
   controllers: [TaskController],
-  providers: [TaskService, JwtAuthGuard],
+  providers: [TaskService, JwtAuthGuard, TasksGateway],
 })
 export class TaskModule {}

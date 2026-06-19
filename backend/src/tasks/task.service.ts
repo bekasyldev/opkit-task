@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
+import { TasksGateway } from './task.gateaway.js';
 
 @Injectable()
 export class TaskService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private gateway: TasksGateway
+  ) {}
 
   create(userId: string, dto: CreateTaskDto) {
     return this.prisma.task.create({
@@ -30,10 +34,15 @@ export class TaskService {
 
   async update(userId: string, id: string, dto: UpdateTaskDto) {
     await this.findOne(userId, id);
-    return this.prisma.task.update({
+
+    const updated = await this.prisma.task.update({
       where: { id },
       data: dto,
     });
+
+    this.gateway.emitTaskUpdated(updated);
+
+    return updated;
   }
 
   async remove(userId: string, id: string) {

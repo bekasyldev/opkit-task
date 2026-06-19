@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { ApiError } from '../lib/api'
 import * as tasksApi from '../lib/tasks'
-import type { Status, Task } from '../types/task'
+import type { Status } from '../types/task'
 import { KanbanColumn } from '../components/KanbanColumn'
+import { useTaskStore } from '../store/taskStore'
 
 const COLUMNS: { status: Status; label: string }[] = [
   { status: 'TODO', label: 'To Do' },
@@ -16,7 +17,11 @@ const COLUMNS: { status: Status; label: string }[] = [
 export function TasksPage() {
   const { logout } = useAuth()
   const navigate = useNavigate()
-  const [tasks, setTasks] = useState<Task[]>([])
+  const tasks = useTaskStore((state) => state.tasks)
+  const setTasks = useTaskStore((state) => state.setTasks)
+  const addTask = useTaskStore((state) => state.addTask)
+  const updateTask = useTaskStore((state) => state.updateTask)
+  const removeTask = useTaskStore((state) => state.removeTask)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -28,7 +33,7 @@ export function TasksPage() {
       .then(setTasks)
       .catch((err) => setError(err instanceof ApiError ? err.message : 'Failed to load tasks'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [setTasks])
 
   function handleLogout() {
     logout()
@@ -43,7 +48,7 @@ export function TasksPage() {
         title,
         description: description || undefined,
       })
-      setTasks((prev) => [task, ...prev])
+      addTask(task)
       setTitle('')
       setDescription('')
     } catch (err) {
@@ -55,7 +60,7 @@ export function TasksPage() {
     setError(null)
     try {
       const updated = await tasksApi.updateTask(id, { status })
-      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)))
+      updateTask(id, updated)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to update task')
     }
@@ -65,7 +70,7 @@ export function TasksPage() {
     setError(null)
     try {
       await tasksApi.deleteTask(id)
-      setTasks((prev) => prev.filter((t) => t.id !== id))
+      removeTask(id)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to delete task')
     }
