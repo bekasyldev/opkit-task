@@ -12,10 +12,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { TaskService } from './task.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { TaskService } from './task.service.js';
+import { CreateTaskDto } from './dto/create-task.dto.js';
+import { UpdateTaskDto } from './dto/update-task.dto.js';
+import { JwtAuthGuard } from '../auth/guards/auth.guard.js';
 
 type AuthRequest = Request & { user: { id: string; email: string } };
 
