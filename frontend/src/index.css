@@ -36,3 +36,54 @@ h2 {
   font-weight: 500;
   color: var(--text-h);
 }
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 64px 20px;
+}
+
+.auth-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.auth-page label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.auth-page input {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-h);
+}
+
+.auth-page button {
+  font: inherit;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.auth-page button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.auth-page .error {
+  color: #e5484d;
+  font-size: 14px;
+  margin: 0;
+}
